@@ -1,27 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import ExpenseItem from "./ExpenseItem";
 import Card from "../../UI/Card";
+import ExpensesFilter from "./ExpensesFilter";
 
-const Expenses = () => {
+const Expenses = (props) => {
+  const [dateFilter, setDateFilter] = useState("");
 
-    const expenses = [
-        {
-            date: new Date(2024,10,12),
-            title: 'New book',
-            price: 30.99
-        },
-        {
-            date: new Date(2024, 10, 12),
-            title: "New Jeans",
-            price: 99.99
-        }
-    ]
-    return(
-        <Card className="expenses">
-            <ExpenseItem data={expenses[0]}></ExpenseItem>
-            <ExpenseItem data={expenses[1]}></ExpenseItem>
-        </Card>
-    )
-}
+  const dateChangeHandeler = (option) => {
+    setDateFilter(option);
+    console.log("Year date in Expenses.jsx" + option);
+  };
+
+  return (
+    <Card className="expenses">
+      <ExpensesFilter
+        onDateChange={(option) => dateChangeHandeler(option)}
+      ></ExpensesFilter>
+      <ExpenseItem data={props.expenses[0]}></ExpenseItem>
+      <ExpenseItem data={props.expenses[1]}></ExpenseItem>
+    </Card>
+  );
+};
 
 export default Expenses;
