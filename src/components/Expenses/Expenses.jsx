@@ -4,11 +4,23 @@ import Card from "../../UI/Card";
 import ExpensesFilter from "./ExpensesFilter";
 
 const Expenses = (props) => {
-  const [dateFilter, setDateFilter] = useState("");
+  const [data, setData] = useState(props.expenses);
+
+  function filterByYear(data, year) {
+    return data.filter((item) => {
+      const date = item.date instanceof Date ? item.date : new Date(item.date);
+      return date.getFullYear() === parseInt(year);
+    });
+  }
 
   const dateChangeHandeler = (option) => {
-    setDateFilter(option);
-    console.log("Year date in Expenses.jsx" + option);
+    const filteredData = filterByYear(props.expenses, option);
+
+    if (filteredData.lenght === 0) {
+      return;
+    }
+
+    setData(filteredData);
   };
 
   return (
@@ -16,8 +28,9 @@ const Expenses = (props) => {
       <ExpensesFilter
         onDateChange={(option) => dateChangeHandeler(option)}
       ></ExpensesFilter>
-      <ExpenseItem data={props.expenses[0]}></ExpenseItem>
-      <ExpenseItem data={props.expenses[1]}></ExpenseItem>
+      {data.map((expense) => {
+        return <ExpenseItem data={expense} key={expense.id}></ExpenseItem>;
+      })}
     </Card>
   );
 };
