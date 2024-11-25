@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ExpenseItem from "./ExpenseItem";
 import Card from "../../UI/Card";
 import ExpensesFilter from "./ExpensesFilter";
@@ -16,11 +16,8 @@ const Expenses = (props) => {
   const dateChangeHandeler = (option) => {
     const filteredData = filterByYear(props.expenses, option);
 
-    if (filteredData.lenght === 0) {
-      return;
-    }
-
     setData(filteredData);
+    console.log(filteredData.length);
   };
 
   return (
@@ -28,9 +25,14 @@ const Expenses = (props) => {
       <ExpensesFilter
         onDateChange={(option) => dateChangeHandeler(option)}
       ></ExpensesFilter>
-      {data.map((expense) => {
-        return <ExpenseItem data={expense} key={expense.id}></ExpenseItem>;
-      })}
+      {data.length === 0 && (
+        <p class="text-white text-center">No expenses found.</p>
+      )}
+
+      {data.length > 0 &&
+        data.map((expense) => {
+          return <ExpenseItem data={expense} key={expense.id}></ExpenseItem>;
+        })}
     </Card>
   );
 };

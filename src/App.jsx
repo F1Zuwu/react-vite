@@ -19,7 +19,7 @@ const App = () => {
     },
     {
       id: "id3",
-      date: new Date(2025, 10, 12),
+      date: new Date(2024, 10, 12),
       title: "New bag",
       price: 99.99,
     },
