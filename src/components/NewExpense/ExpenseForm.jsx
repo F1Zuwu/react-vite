@@ -1,88 +1,94 @@
-import { useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import "./ExpenseForm.css";
+import Error from "../../UI/Error";
 
 const ExpenseForm = (props) => {
-  const [userInput, setUserInput] = useState({
-    enteredTitle: "",
-    enteredPrice: "",
-    enteredDate: "",
-  });
+  const [error, setError] = useState(null);
 
-  const titleChangeHandeler = (event) => {
-    setUserInput({
-      ...userInput,
-      enteredTitle: event.target.value,
-    });
-  };
+  const titleInputRef = useRef();
+  const amountInputRef = useRef();
+  const dateInputRef = useRef();
 
-  const priceChangeHandeler = (event) => {
-    setUserInput({
-      ...userInput,
-      enteredPrice: event.target.value,
-    });
-  };
-  const dateChangeHandeler = (event) => {
-    setUserInput({
-      ...userInput,
-      enteredDate: event.target.value,
-    });
+  const errorHandler = () => {
+    setError(null);
   };
 
   const submitHandeler = (event) => {
     event.preventDefault();
+
+    const enteredTitle = titleInputRef.current.value;
+    const enteredAmount = amountInputRef.current.value;
+    const enteredDate = dateInputRef.current.value;
+
+    if (
+      enteredTitle.trim().length == 0 ||
+      enteredAmount.trim().length == 0 ||
+      enteredDate.trim().length == 0
+    ) {
+      setError({
+        title: "Invalid input",
+        message:
+          "Please enter a valid title or amount or date (do not leave any fields empty)",
+      });
+      return;
+    }
+
     const expenseData = {
-      title: userInput.enteredTitle,
-      price: userInput.enteredPrice,
-      date: new Date(userInput.enteredDate),
+      title: enteredTitle,
+      price: enteredAmount,
+      date: new Date(enteredDate),
     };
 
+    console.log(expenseData);
     props.onSaveExpenseData(expenseData);
-
-    setUserInput({
-      ...userInput,
-      enteredTitle: "",
-      enteredPrice: "",
-      enteredDate: "",
-    });
+    props.onClose();
+    titleInputRef.current.value = "";
+    amountInputRef.current.value = "";
+    dateInputRef.current.value = "";
   };
 
   return (
-    <form onSubmit={(event) => submitHandeler(event)}>
-      <div className="new-expense__controls">
-        <div className="new-expense__control">
-          <label>Title</label>
-          <input
-            value={userInput.enteredTitle}
-            type="text"
-            onChange={(e) => titleChangeHandeler(e)}
-          ></input>
-        </div>
-        <div className="new-expense__control">
-          <label>Price</label>
-          <input
-            value={userInput.enteredPrice}
-            onChange={(e) => priceChangeHandeler(e)}
-            type="number"
-            min="0.01"
-            step="0.01"
-          ></input>
-        </div>
-        <div className="new-expense__control">
-          <label>Date</label>
-          <input
-            value={userInput.enteredDate}
-            onChange={(e) => dateChangeHandeler(e)}
-            type="date"
-            min="2024-11-12"
-            max="2026-01-31"
-          ></input>
-        </div>
+    <Fragment>
+      {error && (
+        <Error
+          title={error.title}
+          message={error.message}
+          onConfirm={errorHandler}
+        />
+      )}
+      <div>
+        <form onSubmit={(event) => submitHandeler(event)}>
+          <div className="new-expense__controls">
+            <div className="new-expense__control">
+              <label>Title</label>
+              <input type="text" ref={titleInputRef}></input>
+            </div>
+            <div className="new-expense__control">
+              <label>Price</label>
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                ref={amountInputRef}
+              ></input>
+            </div>
+            <div className="new-expense__control">
+              <label>Date</label>
+              <input
+                type="date"
+                min="2024-11-12"
+                max="2026-01-31"
+                ref={dateInputRef}
+              ></input>
+            </div>
+          </div>
+          <div className="new-expense__actions">
+            <button type="submit">Add Expense</button>
+            <button onClick={() => props.onClose()}>Cancel</button>
+          </div>
+        </form>
       </div>
-      <div className="new-expense__actions">
-        <button type="submit">Add Expense</button>
-        <button onClick={() => props.onClose()}>Cancel</button>
-      </div>
-    </form>
+    </Fragment>
   );
 };
 

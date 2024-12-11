@@ -20,19 +20,25 @@ const Expenses = (props) => {
     console.log(filteredData.length);
   };
 
+  if (props.isLoading) {
+    return <p className="text-white text-center">Fetching expenses data...</p>;
+  }
+
   return (
     <Card className="expenses">
-      <ExpensesFilter
-        onDateChange={(option) => dateChangeHandeler(option)}
-      ></ExpensesFilter>
-      {data.length === 0 && (
-        <p class="text-white text-center">No expenses found.</p>
-      )}
+      <div>
+        <ExpensesFilter
+          onDateChange={(option) => dateChangeHandeler(option)}
+        ></ExpensesFilter>
 
-      {data.length > 0 &&
-        data.map((expense) => {
-          return <ExpenseItem data={expense} key={expense.id}></ExpenseItem>;
-        })}
+        {data.length === 0 && (
+          <p className="text-white text-center">No expenses found.</p>
+        )}
+        {data.length > 0 &&
+          data.map((expense) => {
+            return <ExpenseItem data={expense} key={expense.id}></ExpenseItem>;
+          })}
+      </div>
     </Card>
   );
 };
